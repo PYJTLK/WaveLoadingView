@@ -8,19 +8,95 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <Button
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:onClick="onClick"
-        android:visibility="visible"/>
-
+    <!--文本风格-->
     <com.pyjtlk.waveloadview.WaveLoadingView
         android:id="@+id/loadView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:imageWaveType="square"
+        app:text="Loading..."
+        app:textSize="20sp"
+        app:waveLength="5"
+        app:color="#AA00"
+        app:interval="5dp"
+        app:waveHeight="normal"
+        app:ghostEffect="true"
+        app:ghostAlphaMax="255"
+        app:ghostAlphaMin="100"/>
+
+    <!--圆形风格-->
+    <com.pyjtlk.waveloadview.WaveLoadingView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:imageWaveType="circle"
         app:imageSize="20dp"
         app:color="#A00A"
+        app:interval="5dp"
+        app:duration="100"
+        app:waveHeight="normal"
+        app:waveLength="5"
+        app:length="10"
+        app:rectRadius="8dp"
+        app:ghostEffect="true"
+        app:ghostAlphaMax="255"
+        app:ghostAlphaMin="100"/>
+
+    <!--正方形风格-->
+    <com.pyjtlk.waveloadview.WaveLoadingView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:imageWaveType="square"
+        app:imageSize="20dp"
+        app:color="#A0A0"
+        app:interval="5dp"
+        app:duration="100"
+        app:waveHeight="normal"
+        app:waveLength="5"
+        app:length="10"
+        app:rectRadius="8dp"
+        app:ghostEffect="true"
+        app:ghostAlphaMax="255"
+        app:ghostAlphaMin="100"/>
+
+    <!--长方形风格-->
+    <com.pyjtlk.waveloadview.WaveLoadingView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:imageWaveType="rect"
+        app:imageSize="20dp"
+        app:color="#A0AA"
+        app:interval="5dp"
+        app:duration="100"
+        app:waveHeight="normal"
+        app:waveLength="5"
+        app:length="10"
+        app:rectRadius="8dp"
+        app:ghostEffect="true"
+        app:ghostAlphaMax="255"
+        app:ghostAlphaMin="100"/>
+
+    <!--噪声波风格-->
+    <com.pyjtlk.waveloadview.WaveLoadingView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:imageWaveType="noise"
+        app:imageSize="20dp"
+        app:color="#AA0A"
+        app:interval="5dp"
+        app:duration="100"
+        app:waveHeight="normal"
+        app:waveLength="5"
+        app:length="10"
+        app:rectRadius="8dp"
+        app:ghostEffect="true"
+        app:ghostAlphaMax="255"
+        app:ghostAlphaMin="100"/>
+
+    <!--自定义风格-->
+    <com.pyjtlk.waveloadview.WaveLoadingView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:customImage="@mipmap/star"
+        app:imageSize="20dp"
         app:interval="5dp"
         app:duration="100"
         app:waveHeight="normal"

@@ -17,7 +17,4 @@ public class MainActivity extends AppCompatActivity {
 
         waveLoadingView = findViewById(R.id.loadView);
     }
-
-    public void onClick(View view) {
-    }
 }

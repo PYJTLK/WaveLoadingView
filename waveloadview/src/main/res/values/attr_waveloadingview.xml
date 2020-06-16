@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WaveLoadingView">
+        <attr name="text" format="string"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="length" format="integer"/>
+        <attr name="waveLength" format="integer"/>
+        <attr name="waveHeight" format="enum">
+            <enum name="slight" value="1"/>
+            <enum name="normal" value="2"/>
+            <enum name="big" value="3"/>
+            <enum name="large" value="4"/>
+        </attr>
+        <attr name="imageWaveType" format="enum">
+            <enum name="circle" value="1"/>
+            <enum name="rect" value="2"/>
+            <enum name="square" value="3"/>
+            <enum name="noise" value="4"/>
+        </attr>
+        <attr name="color" format="color"/>
+        <attr name="customImage" format="reference"/>
+        <attr name="duration" format="integer"/>
+        <attr name="interval" format="dimension"/>
+        <attr name="imageSize" format="dimension"/>
+        <attr name="rectRadius" format="dimension"/>
+        <attr name="ghostEffect" format="boolean"/>
+        <attr name="ghostAlphaMax" format="integer"/>
+        <attr name="ghostAlphaMin" format="integer"/>
+    </declare-styleable>
+</resources>

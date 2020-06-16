@@ -145,7 +145,7 @@ public class WaveLoadingView extends View {
         public void handleMessage(Message msg) {
             WaveLoadingView view = mView.get();
             if(view != null){
-                view.refresh();
+                view.refreshFrame();
             }
         }
 
@@ -395,6 +395,9 @@ public class WaveLoadingView extends View {
         }
     }
 
+    /**
+     * 准备好各元素的y坐标，对于奇数个和偶数个的元素要分开分别处理
+     */
     protected void prepareElementsY(){
         int waveEleCount = 1;
         int waveHighestPos;
@@ -562,10 +565,12 @@ public class WaveLoadingView extends View {
                 mElements[i].alpha =  mWaveAlpha[waveEleCount - 1];
                 waveEleCount++;
             }
-            return;
         }
     }
 
+    /**
+     * 准备好各元素的x坐标
+     */
     protected void prepareElementsX(){
         int drawLeftStart = getPaddingLeft();
 
@@ -594,6 +599,10 @@ public class WaveLoadingView extends View {
         }
     }
 
+    /**
+     * 绘制文本风格的波
+     * @param canvas
+     */
     protected void onDrawText(Canvas canvas){
         mPaint.setColor(mColor);
         mPaint.setTextSize(mTextWidth);
@@ -611,6 +620,10 @@ public class WaveLoadingView extends View {
         }
     }
 
+    /**
+     * 绘制圆点风格的波
+     * @param canvas
+     */
     protected void onDrawCirclesWave(Canvas canvas){
         mPaint.setColor(mColor);
         for(int i = 0;i < mLength;i++){
@@ -625,6 +638,10 @@ public class WaveLoadingView extends View {
         }
     }
 
+    /**
+     * 绘制正方形风格的波
+     * @param canvas
+     */
     protected void onDrawSquareWave(Canvas canvas){
         mPaint.setColor(mColor);
         for(int i = 0;i < mLength;i++){
@@ -649,6 +666,10 @@ public class WaveLoadingView extends View {
         }
     }
 
+    /**
+     * 绘制长方形风格的波
+     * @param canvas
+     */
     protected void onDrawRectWave(Canvas canvas){
         mPaint.setColor(mColor);
         for(int i = 0;i < mLength;i++){
@@ -673,6 +694,10 @@ public class WaveLoadingView extends View {
         }
     }
 
+    /**
+     * 绘制噪声波
+     * @param canvas
+     */
     protected void onDrawNoiseWave(Canvas canvas){
         int nosieWidth = mImageSize / 8;
         int left;
@@ -712,14 +737,20 @@ public class WaveLoadingView extends View {
         }
     }
 
-    protected void refresh(){
-        move();
+    /**
+     * 刷新一帧
+     */
+    protected void refreshFrame(){
+        waveMove();
         if(running){
             mAnimHandler.sendEmptyMessageDelayed(ANIM_MESSAGE,mDuration);
         }
     }
 
-    protected void move(){
+    /**
+     * 波移动一次
+     */
+    protected void waveMove(){
         if(mWaveControler != null){
             mWaveStart = mWaveControler.onRefresh(mWaveStart,0,mElements.length - 1);
         }else{
@@ -944,6 +975,9 @@ public class WaveLoadingView extends View {
         invalidate();
     }
 
+    /**
+     * 解除绑定，避免内存泄漏
+     */
     protected void recycle(){
         mAnimHandler.removeCallbacksAndMessages(null);
         mAnimHandler.recycle();

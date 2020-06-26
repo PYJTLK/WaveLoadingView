@@ -12,9 +12,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
-
 import java.lang.ref.SoftReference;
-
 import androidx.annotation.Nullable;
 
 public class WaveLoadingView extends View {
@@ -297,7 +295,6 @@ public class WaveLoadingView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        //super.onMeasure(widthMeasureSpec,heightMeasureSpec);
         int elementWidth = 0;
         int elementHeight= 0;
 
@@ -352,7 +349,7 @@ public class WaveLoadingView extends View {
             width = wrapWidth;
         }
 
-        setMeasuredDimension(width,height);
+        setMeasuredDimension(MeasureSpec.makeMeasureSpec(width,widthMode),MeasureSpec.makeMeasureSpec(height,heightMode));
     }
 
     private int dp2px(int dp){

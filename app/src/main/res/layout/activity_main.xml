@@ -10,7 +10,6 @@
 
     <!--文本风格-->
     <com.pyjtlk.waveloadview.WaveLoadingView
-        android:id="@+id/loadView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:text="Loading..."
@@ -91,7 +90,7 @@
         app:ghostAlphaMax="255"
         app:ghostAlphaMin="100"/>
 
-    <!--自定义风格-->
+    <!--自定义图标风格-->
     <com.pyjtlk.waveloadview.WaveLoadingView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -103,6 +102,20 @@
         app:waveLength="5"
         app:length="10"
         app:rectRadius="8dp"
+        app:ghostEffect="true"
+        app:ghostAlphaMax="255"
+        app:ghostAlphaMin="100"/>
+
+    <!--自定义绘制风格，需要调用setCustomWaveDrawer方法-->
+    <com.pyjtlk.waveloadview.WaveLoadingView
+        android:id="@+id/loadView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:imageSize="30dp"
+        app:waveLength="5"
+        app:color="#AA0"
+        app:interval="5dp"
+        app:waveHeight="normal"
         app:ghostEffect="true"
         app:ghostAlphaMax="255"
         app:ghostAlphaMin="100"/>

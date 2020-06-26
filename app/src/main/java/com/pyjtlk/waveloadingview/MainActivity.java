@@ -3,7 +3,6 @@ package com.pyjtlk.waveloadingview;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.view.View;
 
 import com.pyjtlk.waveloadview.WaveLoadingView;
 
@@ -16,5 +15,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         waveLoadingView = findViewById(R.id.loadView);
+        waveLoadingView.setCustomWaveDrawer(new TriangleWaveDrawer());
     }
 }

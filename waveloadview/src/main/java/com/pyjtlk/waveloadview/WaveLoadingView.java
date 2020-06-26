@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
@@ -44,7 +45,7 @@ public class WaveLoadingView extends View {
     /**
      * 自定义图像风格
      */
-    public static final int IMAGE_TYPE_CUSTOM = 5;
+    public static final int IMAGE_TYPE_DRAWABLE = 5;
 
     /**
      * 波形高度：低
@@ -125,17 +126,26 @@ public class WaveLoadingView extends View {
     private boolean running;
     private int mWaveAlpha[];
     private boolean ghostEffect;
+    private AbsWaveDrawer mCustomWaveDrawer;
+    private Rect mCustomWaveRect;
+
+    /**
+     * 波绘制器，重写这个类可以实现自定义的波形
+     */
+    public static abstract class AbsWaveDrawer {
+        protected abstract void onDrawWave(Canvas canvas, Paint paint,Rect elementRect, int imageSize);
+    }
 
     private class Element{
         int y;
         int x;
-        int alpha = mGhostAlphaMin;
+        int alpha;
     }
 
     private static final class AnimHandler extends Handler{
         private SoftReference<WaveLoadingView> mView;
 
-        public AnimHandler(WaveLoadingView view){
+        private AnimHandler(WaveLoadingView view){
             mView = new SoftReference<>(view);
         }
 
@@ -147,7 +157,7 @@ public class WaveLoadingView extends View {
             }
         }
 
-        public void recycle(){
+        private void recycle(){
             mView.clear();
         }
     }
@@ -157,7 +167,7 @@ public class WaveLoadingView extends View {
     /**
      * 波控制类，可以用于控制波的移动方向和移动大小
      */
-    public static interface WaveControler{
+    public interface WaveControler{
         /**
          * 波移动前会调用，可以用于控制波的移动方向和移动大小
          * @param currentPostion 波当前的位置，这个位置是指波最高点的位置
@@ -236,7 +246,7 @@ public class WaveLoadingView extends View {
         }
 
         if(mCustomWaveDrawable != null){
-            type = IMAGE_TYPE_CUSTOM;
+            type = IMAGE_TYPE_DRAWABLE;
         }
 
         if(mRectRadius * 2 > mImageSize){
@@ -311,7 +321,7 @@ public class WaveLoadingView extends View {
                 elementWidth = elementHeight = mImageSize;
                 break;
 
-            case IMAGE_TYPE_CUSTOM:
+            case IMAGE_TYPE_DRAWABLE:
                 elementWidth = elementHeight = mImageSize;
                 break;
         }
@@ -365,6 +375,11 @@ public class WaveLoadingView extends View {
         prepareElementsX();
         prepareElementsY();
 
+        if(mCustomWaveDrawer != null){
+            onDrawCustomWave(canvas);
+            return;
+        }
+
         switch(mType){
             case IMAGE_TYPE_TEXT:
                 onDrawText(canvas);
@@ -386,7 +401,7 @@ public class WaveLoadingView extends View {
                 onDrawNoiseWave(canvas);
                 break;
 
-            case IMAGE_TYPE_CUSTOM:
+            case IMAGE_TYPE_DRAWABLE:
                 onDrawDrawable(canvas);
                 break;
         }
@@ -418,7 +433,7 @@ public class WaveLoadingView extends View {
                 elementHeight = mImageSize;
                 break;
 
-            case IMAGE_TYPE_CUSTOM:
+            case IMAGE_TYPE_DRAWABLE:
                 elementHeight = mImageSize;
                 break;
         }
@@ -585,7 +600,7 @@ public class WaveLoadingView extends View {
                 elementWidth = mImageSize;
                 break;
 
-            case IMAGE_TYPE_CUSTOM:
+            case IMAGE_TYPE_DRAWABLE:
                 elementWidth = mImageSize;
                 break;
         }
@@ -719,6 +734,29 @@ public class WaveLoadingView extends View {
         }
     }
 
+    /**
+     * 绘制自定义波
+     * @param canvas
+     */
+    protected void onDrawCustomWave(Canvas canvas){
+        mPaint.setColor(mColor);
+        for(int i = 0;i < mLength;i++){
+            if(ghostEffect){
+                mPaint.setAlpha(mElements[mDisplayStart + i].alpha);
+            }
+
+            mCustomWaveRect.bottom = getHeight() - getPaddingBottom();
+            mCustomWaveRect.top = mElements[mDisplayStart + i].y;
+            mCustomWaveRect.left = mElements[mDisplayStart + i].x;
+            mCustomWaveRect.right = mElements[mDisplayStart + i].x + mImageSize;
+            mCustomWaveDrawer.onDrawWave(canvas,mPaint,mCustomWaveRect,mImageSize);
+        }
+    }
+
+    /**
+     * 绘制自定义图案的波
+     * @param canvas
+     */
     protected void onDrawDrawable(Canvas canvas){
         for(int i = 0;i < mLength;i++){
             if(ghostEffect){
@@ -788,7 +826,7 @@ public class WaveLoadingView extends View {
 
     /**
      * 设置动画间隔时间，这个时间是指波每移动一步的时间，单位为毫秒
-     * @param duration
+     * @param duration 动画间隔时间
      */
     public void setDuration(int duration){
         if(duration < 0){
@@ -804,7 +842,7 @@ public class WaveLoadingView extends View {
      * {@link WaveLoadingView#IMAGE_TYPE_RECT}
      * {@link WaveLoadingView#IMAGE_TYPE_SQUARE}
      * {@link WaveLoadingView#IMAGE_TYPE_NOISE}
-     * @param color
+     * @param color 元素的颜色
      */
     public void setColor(int color){
         mColor = color;
@@ -825,7 +863,7 @@ public class WaveLoadingView extends View {
      * {@link WaveLoadingView#IMAGE_TYPE_RECT}
      * {@link WaveLoadingView#IMAGE_TYPE_SQUARE}
      * {@link WaveLoadingView#IMAGE_TYPE_NOISE}
-     * {@link WaveLoadingView#IMAGE_TYPE_CUSTOM}
+     * {@link WaveLoadingView#IMAGE_TYPE_DRAWABLE}
      * @param waveLength 波的宽度
      */
     public void setWaveLength(int waveLength){
@@ -854,7 +892,7 @@ public class WaveLoadingView extends View {
 
     /**
      * 设置波控制器，默认下波是从左往右移动的，如果设置成功，则原来的波移动方式会被替代
-     * @param waveControler
+     * @param waveControler 波控制器
      */
     public void setWaveControler(WaveControler waveControler){
         mWaveControler = waveControler;
@@ -862,7 +900,7 @@ public class WaveLoadingView extends View {
 
     /**
      * 设置元素间的间隔
-     * @param interval
+     * @param interval 元素间的间隔
      */
     public void setInterval(int interval){
         boolean isRunning = running;
@@ -884,7 +922,7 @@ public class WaveLoadingView extends View {
 
     /**
      * 获取元素间隔
-     * @return
+     * @return 元素间隔
      */
     public int getInterval(){
         return mInterval;
@@ -896,17 +934,15 @@ public class WaveLoadingView extends View {
      * {@link WaveLoadingView#IMAGE_TYPE_RECT}
      * {@link WaveLoadingView#IMAGE_TYPE_SQUARE}
      * {@link WaveLoadingView#IMAGE_TYPE_NOISE}
-     * {@link WaveLoadingView#IMAGE_TYPE_CUSTOM}
-     * @param type
+     * {@link WaveLoadingView#IMAGE_TYPE_DRAWABLE}
+     * @param type 波的风格
      */
     public void setType(int type){
         if(mType == IMAGE_TYPE_TEXT){
             return;
         }
 
-        if(mType == IMAGE_TYPE_CUSTOM && mCustomWaveDrawable == null){
-            return;
-        }
+        if(mType == IMAGE_TYPE_DRAWABLE && mCustomWaveDrawable == null) return;
 
         mType = type;
         invalidate();
@@ -919,8 +955,8 @@ public class WaveLoadingView extends View {
      * {@link WaveLoadingView#IMAGE_TYPE_RECT}
      * {@link WaveLoadingView#IMAGE_TYPE_SQUARE}
      * {@link WaveLoadingView#IMAGE_TYPE_NOISE}
-     * {@link WaveLoadingView#IMAGE_TYPE_CUSTOM}
-     * @return
+     * {@link WaveLoadingView#IMAGE_TYPE_DRAWABLE}
+     * @return 当前的风格
      */
     public int getType(){
         return mType;
@@ -928,7 +964,7 @@ public class WaveLoadingView extends View {
 
     /**
      * 是否启用幻影效果
-     * @return
+     * @return 是否启动幻影效果
      */
     public boolean isGhostEffect(){
         return ghostEffect;
@@ -936,7 +972,7 @@ public class WaveLoadingView extends View {
 
     /**
      * 启用幻影效果
-     * @param allowGhostEffect
+     * @param allowGhostEffect 是否启动幻影效果
      */
     public void setGhostEffect(boolean allowGhostEffect){
         ghostEffect = allowGhostEffect;
@@ -961,14 +997,24 @@ public class WaveLoadingView extends View {
 
     /**
      * 设置元素自定义图片,此方法会复制传入的Drawable，所以此Drawable的原始尺寸不要过大，否则会很消耗内存
-     * @param drawable
+     * @param drawable 自定义图标
      */
     public void setWaveDrawable(Drawable drawable){
         if(drawable == null){
             return;
         }
         mCustomWaveDrawable = drawable.mutate();
-        mType = IMAGE_TYPE_CUSTOM;
+        mType = IMAGE_TYPE_DRAWABLE;
+        invalidate();
+    }
+
+    /**
+     * 设置波绘制器
+     * @param waveDrawer 波绘制器
+     */
+    public void setCustomWaveDrawer(AbsWaveDrawer waveDrawer){
+        mCustomWaveDrawer = waveDrawer;
+        mCustomWaveRect = new Rect();
         invalidate();
     }
 

@@ -6,6 +6,5 @@ allprojects {
 }
 
 dependencies {
-    ...
-    implementation 'com.github.PYJTLK:WaveLoadingView:1.0' 
+	        implementation 'com.github.PYJTLK:WaveLoadingView:1.1'
 }
